@@ -1,11 +1,14 @@
 import express, { Express, Request, Response } from "express";
-import { json } from "body-parser";
+import { router } from "./routes/router";
+import { validators } from "./utils/validation";
+import { retrieveCSVFromSFTP } from "./services/retrieveCSVFromSFTP";
 
 const app: Express = express();
-app.use(json());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello World!");
+app.use(router);
+
+retrieveCSVFromSFTP(validators).then(() => {
+  console.log("CSV processing complete");
 });
 
 app.listen(3001, () => {
