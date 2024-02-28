@@ -8,7 +8,7 @@ const app: Express = express();
 app.use(router);
 
 retrieveCSVFromSFTP(validators).then(() => {
-  console.log("CSV processing complete");
+  console.log("CSV file retrieved from SFTP server");
 });
 
 app.listen(3001, () => {

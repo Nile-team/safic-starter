@@ -7,8 +7,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const retrieveCSVFromSFTP = async (validators: any) => {
+const retryDelay = 5000;
+
+const retrieveCSVFromSFTP = async (validators: any, retryCount: number = 0) => {
+  const maxRetries = 3;
   const sftp = new Client();
+
   try {
     await sftp.connect(sftpConfig);
     console.log("Connection established");
@@ -23,15 +27,24 @@ const retrieveCSVFromSFTP = async (validators: any) => {
       relax_column_count: true,
       columns: false,
     });
+
     pt.pipe(parser);
     parser.on("data", (row) => {
       validateCSVData(row, validators);
     });
+
     parser.on("end", () => {
       console.log("File received");
     });
   } catch (err: any) {
-    console.error(`Error: ${err.message}`);
+    console.error("Error retrieving CSV file from SFTP server:", err);
+    if (retryCount < maxRetries) {
+      console.log(`Retrying in ${retryDelay / 1000} seconds...`);
+      setTimeout(() => {
+        dotenv.config(); // Refresh environment variables
+        retrieveCSVFromSFTP(validators, retryCount + 1);
+      }, retryDelay);
+    }
   } finally {
     await sftp.end();
     console.log("Connection closed");
