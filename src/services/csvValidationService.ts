@@ -1,4 +1,4 @@
-import { searchContacts } from "./handleSimilarContactEmail";
+// import { searchContacts } from "./handleSimilarContactEmail";
 
 const validCSVData: any[] = [];
 const invalidCSVData: any[] = [];
@@ -18,13 +18,13 @@ const validateCSVData = async (
       }
     });
 
-    const emailIndex = row.findIndex((value, index) => index === 0); // email is the first column
-    if (emailIndex !== -1) {
-      const email = row[emailIndex];
-      if (await searchContacts(email)) {
-        errors.push(`Email ${email} already exists in HubSpot contacts`);
-      }
-    }
+    // const emailIndex = row.findIndex((value, index) => index === 0); // email is the first column
+    // if (emailIndex !== -1) {
+    //   const email = row[emailIndex];
+    //   if (await searchContacts(email)) {
+    //     errors.push(`Email ${email} already exists in HubSpot contacts`);
+    //   }
+    // }
   }
   if (errors.length === 0) {
     validCSVData.push({ rowData: row, rowNumber });
