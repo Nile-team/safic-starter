@@ -1,5 +1,9 @@
 import csv from "csv-parse";
-import { validateCSVData } from "./csvValidationService";
+import {
+  validateCSVData,
+  invalidCSVData,
+  validCSVData,
+} from "./csvValidationService";
 import { sftpConfig } from "../utils/sftpConfig";
 import Client from "ssh2-sftp-client";
 import { PassThrough } from "stream";
@@ -28,9 +32,12 @@ const retrieveCSVFromSFTP = async (validators: any, retryCount: number = 0) => {
       columns: false,
     });
 
+    let rowNumber = 1; // Initialize row number
+
     pt.pipe(parser);
     parser.on("data", (row) => {
-      validateCSVData(row, validators);
+      validateCSVData(row, validators, rowNumber);
+      rowNumber++;
     });
 
     parser.on("end", () => {
