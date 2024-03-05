@@ -1,6 +1,7 @@
 import { hubspotClient } from "../utils/hubspotConfig";
 import { Request, Response } from "express";
 import { handleGetContactById } from "../services/handleGetContactById";
+import { handleGetDealById } from "../services/handleGetDealById";
 
 const getAllHubspotAssosiate = async (req: Request, res: Response) => {
   const limit = undefined;
@@ -37,14 +38,26 @@ const getAllHubspotAssosiate = async (req: Request, res: Response) => {
             ? associations.contacts.results
             : [];
 
+        const deals = associations && associations.deals ? associations.deals.results : [];
+
         // Extract unique contact IDs
         const uniqueContactIds = [
           ...new Set(contacts.map((contact) => contact.id)),
         ];
 
+        // Extract unique deal IDs
+        const uniqueDealIds = [
+          ...new Set(deals.map((deal) => deal.id)),
+        ];
+
         // Fetch contact details for each unique contact ID
         const contactDetails = await Promise.all(
           uniqueContactIds.map((contactId) => handleGetContactById(contactId))
+        );
+
+        // Fetch deal details for each unique deal ID
+        const dealDetails = await Promise.all(
+          uniqueDealIds.map((dealId) => handleGetDealById(dealId))
         );
 
         return {
@@ -55,6 +68,9 @@ const getAllHubspotAssosiate = async (req: Request, res: Response) => {
           updatedAt,
           contacts: {
             results: contactDetails.filter(Boolean), // Remove null values
+          },
+          deals: {
+            results: dealDetails.filter(Boolean), // Remove null values
           },
         };
       })
