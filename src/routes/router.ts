@@ -7,7 +7,8 @@ import { getHubspotCompany } from "../controllers/getHubspotCompanyController";
 import { getContactById } from "../controllers/getContactById";
 import { getCompanyById } from "../controllers/getCompanyById";
 import { getAllHubspotAssosiate } from "../controllers/getAllHubspotAssosiateController";
-import { getHubspotDeals } from "../controllers/getHubspotDealsControllers";
+import { getHubspotDeals } from "../controllers/getHubspotDealController";
+import { getDealById } from "../controllers/getDealById";
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.get("/contact/:id", getContactById);
 router.get("/company/:id", getCompanyById);
 router.get("/associations", getAllHubspotAssosiate);
 router.get("/deals", getHubspotDeals);
+router.get("/deals/:id", getDealById);
 
 export { router };
